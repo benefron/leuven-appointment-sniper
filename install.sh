@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Validates .env, then installs and starts the launchd job (every 5 min while the Mac is awake).
+# Validates .env, then installs and starts the launchd job (every 15 min while the Mac is awake).
 set -e
 cd "$(dirname "$0")"
 DIR="$PWD"
@@ -15,7 +15,7 @@ cat > "$PLIST" <<PL
 <plist version="1.0"><dict>
   <key>Label</key><string>$LABEL</string>
   <key>ProgramArguments</key><array><string>/bin/zsh</string><string>$DIR/run.sh</string></array>
-  <key>StartInterval</key><integer>300</integer>
+  <key>StartInterval</key><integer>900</integer>
   <key>RunAtLoad</key><true/>
   <key>StandardOutPath</key><string>$DIR/snipe.log</string>
   <key>StandardErrorPath</key><string>$DIR/snipe.log</string>

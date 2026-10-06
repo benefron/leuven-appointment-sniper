@@ -1,6 +1,6 @@
 # Leuven appointment sniper
 
-Polls the Leuven Qmatic booking API every 5 minutes and sends a push (ntfy.sh) when a slot
+Polls the Leuven Qmatic booking API every 15 minutes and sends a push (ntfy.sh) when a slot
 before the deadline (default 15/10/2026) appears, listing the earliest slot for 4, 3, 2 and 1
 people. You book it yourself. Each slot is only announced once. Auto-booking exists but is off
 unless `BOOK=1` and your details are set in `.env`.
