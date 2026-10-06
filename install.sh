@@ -4,10 +4,9 @@ set -e
 cd "$(dirname "$0")"
 DIR="$PWD"
 set -a; source ./.env; set +a
-for v in FIRST_NAME LAST_NAME DOB EMAIL NTFY_TOPIC; do
+for v in NTFY_TOPIC; do
   [ -n "${(P)v}" ] || { echo ".env is missing $v"; exit 1; }
 done
-[ "$DOB" != "DD/MM/YYYY" ] || { echo "Set DOB in .env"; exit 1; }
 LABEL=com.benefron.leuven-sniper
 PLIST="$HOME/Library/LaunchAgents/$LABEL.plist"
 cat > "$PLIST" <<PL

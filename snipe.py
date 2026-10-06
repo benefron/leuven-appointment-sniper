@@ -162,6 +162,30 @@ def cmd_check(q, deadline):
         print(f"{n} people: earliest {first}{flag}")
 
 
+def run_notify_only(q, deadline, lead):
+    """Push the earliest slot before the deadline for each group size; never book."""
+    state = load_state()
+    state.setdefault("notified", [])
+    if date.today() >= deadline:
+        print("Deadline passed. Nothing to do.")
+        return
+    found = []
+    for n in (4, 3, 2, 1):
+        slot = next(candidate_slots(q, n, deadline, lead), None)
+        if slot:
+            found.append((n, slot[0], slot[1]))
+    fresh = [f for f in found if f"{f[0]}:{f[1]}:{f[2]}" not in state["notified"]]
+    if not fresh:
+        print("No new slot before the deadline." if not found else "Slots exist but already notified.")
+        return
+    lines = [f"{n} people: {d} {t}" for n, d, t in found]
+    notify("EARLIER APPOINTMENT AVAILABLE", "\n".join(lines) + f"\nBook now: {SITE}",
+           priority="urgent", tags="rotating_light")
+    state["notified"] += [f"{n}:{d}:{t}" for n, d, t in fresh]
+    save_state(state)
+    print("Notified:", "; ".join(lines))
+
+
 def run(q, dry_run, deadline, lead):
     state = load_state()
     state.setdefault("notified", [])
@@ -237,8 +261,10 @@ def main():
         q = Qmatic()
         if a.check:
             cmd_check(q, deadline)
-        else:
+        elif env("BOOK") == "1" or a.dry_run:
             run(q, a.dry_run, deadline, lead)
+        else:
+            run_notify_only(q, deadline, lead)
     except requests.RequestException as e:
         print(f"Network/API error: {type(e).__name__}: {e}")
         sys.exit(1)
